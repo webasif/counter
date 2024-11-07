@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Counter Example</title>
+  <style>
+    .counter {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .counter-section {
+      height: 500px;
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="counter-section">
+    <h2>Counter Section</h2>
+    <p>Scroll down to view the counters:</p>
+    <div class="counter" data-target="100">0</div>
+    <div class="counter" data-target="200">0</div>
+    <div class="counter" data-target="50">0</div>
+  </div>
+
+  <script>
+    function startCounter(element, targetValue) {
+      let currentValue = 0;
+      const increment = Math.ceil(targetValue / 100); // Adjust the increment value as needed
+
+      const counterInterval = setInterval(() => {
+        currentValue += increment;
+        if (currentValue >= targetValue) {
+          currentValue = targetValue;
+          clearInterval(counterInterval);
+        }
+        element.textContent = currentValue;
+      }, 10); // Adjust the interval as needed
+    }
+
+    function handleIntersect(entries, observer) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const counterElements = entry.target.querySelectorAll('.counter');
+
+          counterElements.forEach(counterElement => {
+            const targetValue = parseInt(counterElement.getAttribute('data-target'));
+
+            if (!isNaN(targetValue)) {
+              // Reset counter value to 0
+              counterElement.textContent = '0';
+
+              // Start the counter
+              startCounter(counterElement, targetValue);
+            }
+          });
+        }
+      });
+    }
+
+    const observer = new IntersectionObserver(handleIntersect, { threshold: 0 });
+    const counterSection = document.querySelector('.counter-section');
+    observer.observe(counterSection);
+  </script>
+</body>
+</html>
